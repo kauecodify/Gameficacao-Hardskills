@@ -58,7 +58,7 @@ class Obstacle(pygame.sprite.Sprite):
             self.rect.y = random.randrange(-100, -OBSTACLE_HEIGHT)
             self.speedy = random.randrange(1, 4)
 
-hard_skills_list = ["Comunicação", "Trabalho em Equipe", "Criatividade"]
+soft_skills_list = ["Comunicação", "Trabalho em Equipe", "Criatividade"]
 
 motivational_quote = "Os obstáculos não devem te impedir, eles devem te fortalecer!"
 
@@ -79,6 +79,8 @@ clock = pygame.time.Clock()
 game_started = False
 start_time = None
 score = 0
+congrats_time = None
+show_congrats = False
 
 # Definindo a função para o botão iniciar
 def draw_button(text, x, y, w, h, color, hover_color, action=None):
@@ -115,12 +117,12 @@ def restart_game():
         obstacle.rect.x = random.randrange(0, SCREEN_WIDTH - OBSTACLE_WIDTH)
         obstacle.rect.y = random.randrange(-100, -OBSTACLE_HEIGHT)
 
-# Função para exibir todas as hard skills
-def show_all_hard_skills():
+# Função para exibir todas as soft skills
+def show_all_soft_skills():
     font = pygame.font.SysFont(None, 24)
     text_y = 60
-    for skill in hard_skills_list:
-        text = font.render(f"Hard Skill: {skill}", True, WHITE)
+    for skill in soft_skills_list:
+        text = font.render(f"Soft Skill: {skill}", True, WHITE)
         screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, text_y))
         text_y += 30
 
@@ -140,7 +142,7 @@ while True:
         text = font.render(motivational_quote, True, WHITE)
         screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2 - 100))
 
-        show_all_hard_skills()
+        show_all_soft_skills()
 
         draw_button("Iniciar", SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT // 2 - 25, 100, 50, GREEN, (0, 255, 0), start_game)
     else:
@@ -157,14 +159,22 @@ while True:
 
         if score in [10, 20, 30]:
             font = pygame.font.SysFont(None, 24)
-            text = font.render(f"Hard Skill: {hard_skills_list[score // 10 - 1]}", True, WHITE)
+            text = font.render(f"Soft Skill: {soft_skills_list[score // 10 - 1]}", True, WHITE)
             screen.blit(text, (10, 30))
             
-        if score == 40:
+        if score == 40 and not show_congrats:
+            congrats_time = pygame.time.get_ticks()
+            show_congrats = True
+            
+        if show_congrats:
             font = pygame.font.SysFont(None, 36)
-            text = font.render("Parabéns, você sabe as principais hard skills!", True, WHITE)
+            text = font.render("Parabéns, você sabe as principais soft skills!", True, WHITE)
             screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2))
-            show_all_hard_skills()  # Exibir todas as hard skills
+            show_all_soft_skills()  # Exibir todas as soft skills
+            
+            if pygame.time.get_ticks() - congrats_time > 10000:  # Exibir por 10 segundos
+                show_congrats = False
+                restart_game()
 
         all_sprites.draw(screen)
         
